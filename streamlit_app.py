@@ -33,7 +33,7 @@ if ingredients_list:
         smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/" + fruit_chosen)
         
         # Ye line sirf response code dikhayegi (e.g., <Response [200]>)
-        st.text(smoothiefroot_response) 
+        st.text(smoothiefroot_response.json()) 
         
         # Data ko table ki surat mein dikhane ke liye niche wali line use karein
         sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
