@@ -1,7 +1,7 @@
 # Import python packages
 import streamlit as st
 from snowflake.snowpark.functions import col
-import requests # Naya library
+import requests #
 
 st.title("Customize Your Smoothie 🥤")
 st.write("Choose the fruit you want in your custom Smoothie!")
@@ -26,13 +26,18 @@ if ingredients_list:
     for fruit_chosen in ingredients_list:
         ingredients_string += fruit_chosen + ' '
         
-        # --- Naya API Section ---
+        # --- API Section Start ---
         st.subheader(fruit_chosen + ' Nutrition Information')
-        # SmoothieFroot API call
-        sf_response = requests.get("https://my.smoothiefroot.com/api/fruit/" + fruit_chosen)
-        # JSON ko dataframe mein convert karke dikhana
-        sf_df = st.dataframe(data=sf_response.json(), use_container_width=True)
-        # ------------------------
+        
+        # URL mein ab hum watermelon ki jagah 'fruit_chosen' variable use kar rahe hain taaki har fruit ka data mil sake
+        smoothiefroot_response = requests.get("https://my.smoothiefroot.com/api/fruit/" + fruit_chosen)
+        
+        # Ye line sirf response code dikhayegi (e.g., <Response [200]>)
+        st.text(smoothiefroot_response) 
+        
+        # Data ko table ki surat mein dikhane ke liye niche wali line use karein
+        sf_df = st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
+        # --- API Section End ---
 
     my_insert_stmt = f"""
         INSERT INTO smoothies.public.orders (ingredients, name_on_order)
@@ -45,5 +50,3 @@ if ingredients_list:
         if name_on_order:
             session.sql(my_insert_stmt).collect()
             st.success(f'Your Smoothie is ordered, {name_on_order}! ✅', icon="✅")
-        else:
-            st.error("Please add a name for the order.")
